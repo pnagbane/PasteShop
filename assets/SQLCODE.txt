@@ -1,0 +1,17 @@
+CREATE DATABASE pasteshop_db;
+USE pasteshop_db;
+
+CREATE TABLE users (
+    user_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    firstname VARCHAR(30) NOT NULL,
+    middlename VARCHAR(30) NULL,
+    surname VARCHAR(30) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password CHAR(255) NOT NULL,
+    phone VARCHAR(14) NOT NULL UNIQUE,
+    gender ENUM('Male', 'Female', 'Others') DEFAULT ('Male'),
+    profile_picture VARCHAR(255) NULL,
+	user_role ENUM('admin', 'vendor', 'user') DEFAULT ('user'),
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
