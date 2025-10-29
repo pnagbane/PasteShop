@@ -6,3 +6,5 @@ require_once('assets/header.php');
 
 echo uniqid('pasting_');
 ?>
+<h1>Welcome to PasteShop</h1>
+<p>Home of pasting</p>
