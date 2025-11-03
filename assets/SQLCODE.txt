@@ -15,3 +15,7 @@ CREATE TABLE users (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Adding verification to user TABLE
+ALTER TABLE users ADD COLUMN verification_code VARCHAR(255) AFTER user_role;
+ALTER TABLE users ADD COLUMN verified TINYINT(1) DEFAULT 0 AFTER verification_code;

@@ -4,7 +4,8 @@
 $pagetitle = "Welcome to PasteShop";
 require_once('assets/header.php');
 
-echo uniqid('pasting_');
+// echo uniqid('pasting_');
+echo bin2hex(random_bytes(32));
 ?>
 <h1>Welcome to PasteShop</h1>
 <p>Home of pasting</p>

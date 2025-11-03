@@ -1,10 +1,12 @@
 <?php
 $pagetitle = "Create an Account";
 require_once('assets/header.php');
+require_once('assets/mailer.php');
 
 // Variable Declaration
 $imageError = $firstnameError = $middlenameError = $surnameError = $phoneError = $emailError = $passwordError = $confirmPasswordError = $genderError = $roleError = "";
 
+// 
 $firstname = $middlename = $surname = $email = $password = $confirmPassword = $phone = "";
 
 // Capturing form data
@@ -94,23 +96,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $imageError = "File is corrupted";
     }
-
+    
     if ($firstnameError == "" && $surnameError == "" && $emailError == "" && $phoneError == "" && $passwordError == "" && $confirmPasswordError == "" && $imageError == "") {
-        $query = "INSERT INTO users (`firstname`, `middlename`, `surname`, `email`, `password`, `phone`, `gender`, `profile_picture`, `user_role`) VALUES (?,?,?,?,?,?,?,?,?)";
+        $verification_code = bin2hex(random_bytes(32));
+        $query = "INSERT INTO users (`firstname`, `middlename`, `surname`, `email`, `password`, `phone`, `gender`, `profile_picture`, `user_role`, `verification_code`) VALUES (?,?,?,?,?,?,?,?,?,?)";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param('sssssssss',$firstname, $middlename, $surname, $email, $hash, $phone, $gender, $fileLocation, $role);
+        $stmt->bind_param('ssssssssss',$firstname, $middlename, $surname, $email, $hash, $phone, $gender, $fileLocation, $role, $verification_code);
         if($stmt->execute()) {
+            $link = "http://localhost/pasteshop/verify.php?code=$verification_code";
+            $name = $firstname . " " . $surname;
+            $mail->setFrom('pasteshop@roncloud.com.ng', 'PasteShop');
+            $mail->addAddress($email, $name);
+            $mail->isHTML(true);
+            $mail->Subject = 'Account Verification';
+            $mail->Body = "<h1>Hello $name</h1> <p>Below is a link to verify your account with us at PasteShop Limited</p> <p>Please click <a href='$link'>here</a> to verify</p> <p>$link</p> <h3>Thank you</h3> ";
+            $mail->send();
             move_uploaded_file($image['tmp_name'], $fileLocation);
             echo "<h1>Registered Successfully";
         } else {
             echo "<h1>Registration Failed";
         }
-
-        // echo "$firstname, $middlename, $surname, $email, $phone, $password, $hash, $role, $gender";
-        // echo "<br/>";
-        // echo "<pre>";
-        // var_dump($image);
-        // echo "</pre>";
     } else {
         echo "<h1>Registration Failed</h1>";
     }
