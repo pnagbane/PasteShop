@@ -80,10 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Validate Image
-    if($image['error'] == 0) {
-        if($image['type'] == 'image/jpeg' || $image['type'] == 'image/jpg' || $image['type'] == 'image/png') {
-            $fileSize = 3 * 1024 *1024;
-            if($image['size'] <= $fileSize) {
+    if ($image['error'] == 0) {
+        if ($image['type'] == 'image/jpeg' || $image['type'] == 'image/jpg' || $image['type'] == 'image/png') {
+            $fileSize = 3 * 1024 * 1024;
+            if ($image['size'] <= $fileSize) {
                 // $storage = 'profilepictures/';
                 $filename = uniqid($firstname . $surname . "_") . "." . pathinfo($image['name'], PATHINFO_EXTENSION);
                 $fileLocation = 'profilepictures/' . $filename;
@@ -96,21 +96,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $imageError = "File is corrupted";
     }
-    
+
     if ($firstnameError == "" && $surnameError == "" && $emailError == "" && $phoneError == "" && $passwordError == "" && $confirmPasswordError == "" && $imageError == "") {
         $verification_code = bin2hex(random_bytes(32));
-        $query = "INSERT INTO users (`firstname`, `middlename`, `surname`, `email`, `password`, `phone`, `gender`, `profile_picture`, `user_role`, `verification_code`) VALUES (?,?,?,?,?,?,?,?,?,?)";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('ssssssssss',$firstname, $middlename, $surname, $email, $hash, $phone, $gender, $fileLocation, $role, $verification_code);
-        if($stmt->execute()) {
-            $link = "http://localhost/pasteshop/verify.php?code=$verification_code";
-            $name = $firstname . " " . $surname;
-            $mail->setFrom('pasteshop@roncloud.com.ng', 'PasteShop');
-            $mail->addAddress($email, $name);
-            $mail->isHTML(true);
-            $mail->Subject = 'Account Verification';
-            $mail->Body = "<h1>Hello $name</h1> <p>Below is a link to verify your account with us at PasteShop Limited</p> <p>Please click <a href='$link'>here</a> to verify</p> <p>$link</p> <h3>Thank you</h3> ";
-            $mail->send();
+        $link = "http://localhost/pasteshop/verify.php?code=$verification_code";
+        $name = $firstname . " " . $surname;
+        $mail->setFrom('pasteshop@roncloud.com.ng', 'PasteShop');
+        $mail->addAddress($email, $name);
+        $mail->isHTML(true);
+        $mail->Subject = 'Account Verification';
+        $mail->Body = "<h1>Hello $name</h1> <p>Below is a link to verify your account with us at PasteShop Limited</p> <p>Please click <a href='$link'>here</a> to verify</p> <p>$link</p> <h3>Thank you</h3> ";
+        if ($mail->send()) {
+            $query = "INSERT INTO users (`firstname`, `middlename`, `surname`, `email`, `password`, `phone`, `gender`, `profile_picture`, `user_role`, `verification_code`) VALUES (?,?,?,?,?,?,?,?,?,?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param('ssssssssss', $firstname, $middlename, $surname, $email, $hash, $phone, $gender, $fileLocation, $role, $verification_code);
+            $stmt->execute();
             move_uploaded_file($image['tmp_name'], $fileLocation);
             echo "<h1>Registered Successfully";
         } else {
@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Surname -->
             <div>
                 <label for="surname" class="block text-sm font-medium text-gray-700 mb-1">Surname</label>
-                <input type="text" name="surname" class="w-full px-4 py-3 rounded-lg border border-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" value="<?= $surname ?>"/>
+                <input type="text" name="surname" class="w-full px-4 py-3 rounded-lg border border-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" value="<?= $surname ?>" />
                 <span class="text-red-500"><?= $surnameError ?></span>
             </div>
 
@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <!-- Confirm Password -->
             <div class="relative">
-                <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1 " >Confirm Password</label>
+                <label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1 ">Confirm Password</label>
                 <input type="password" name="confirm_password" id="pass2" class="w-full px-4 py-3 rounded-lg border border-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" value="<?= $confirmPassword ?>" />
                 <span class="h-5 w-5 absolute cursor-pointer" style="top: 40px; right:10px" id="check2"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
                         <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
@@ -263,9 +263,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const check1 = document.querySelector('#check1');
     const pass1 = document.querySelector("#pass1");
 
-    check1.addEventListener('click', (e) =>{
+    check1.addEventListener('click', (e) => {
         check1.classList.toggle('show');
-        if(check1.classList.contains('show')) {
+        if (check1.classList.contains('show')) {
             pass1.type = 'text';
             check1.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M3.53 2.47a.75.75 0 0 0-1.06 1.06l18 18a.75.75 0 1 0 1.06-1.06l-18-18ZM22.676 12.553a11.249 11.249 0 0 1-2.631 4.31l-3.099-3.099a5.25 5.25 0 0 0-6.71-6.71L7.759 4.577a11.217 11.217 0 0 1 4.242-.827c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113Z" /><path d="M15.75 12c0 .18-.013.357-.037.53l-4.244-4.243A3.75 3.75 0 0 1 15.75 12ZM12.53 15.713l-4.243-4.244a3.75 3.75 0 0 0 4.244 4.243Z" /><path d="M6.75 12c0-.619.107-1.213.304-1.764l-3.1-3.1a11.25 11.25 0 0 0-2.63 4.31c-.12.362-.12.752 0 1.114 1.489 4.467 5.704 7.69 10.675 7.69 1.5 0 2.933-.294 4.242-.827l-2.477-2.477A5.25 5.25 0 0 1 6.75 12Z" /></svg>';
         } else {
@@ -277,9 +277,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const check2 = document.querySelector('#check2');
     const pass2 = document.querySelector("#pass2");
 
-    check2.addEventListener('click', (e) =>{
+    check2.addEventListener('click', (e) => {
         check2.classList.toggle('show');
-        if(check2.classList.contains('show')) {
+        if (check2.classList.contains('show')) {
             pass2.type = 'text';
             check2.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path d="M3.53 2.47a.75.75 0 0 0-1.06 1.06l18 18a.75.75 0 1 0 1.06-1.06l-18-18ZM22.676 12.553a11.249 11.249 0 0 1-2.631 4.31l-3.099-3.099a5.25 5.25 0 0 0-6.71-6.71L7.759 4.577a11.217 11.217 0 0 1 4.242-.827c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113Z" /><path d="M15.75 12c0 .18-.013.357-.037.53l-4.244-4.243A3.75 3.75 0 0 1 15.75 12ZM12.53 15.713l-4.243-4.244a3.75 3.75 0 0 0 4.244 4.243Z" /><path d="M6.75 12c0-.619.107-1.213.304-1.764l-3.1-3.1a11.25 11.25 0 0 0-2.63 4.31c-.12.362-.12.752 0 1.114 1.489 4.467 5.704 7.69 10.675 7.69 1.5 0 2.933-.294 4.242-.827l-2.477-2.477A5.25 5.25 0 0 1 6.75 12Z" /></svg>';
         } else {
